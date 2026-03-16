@@ -1,73 +1,57 @@
-abstract class Room {
-    protected String roomType;
-    protected int beds;
-    protected int size;
-    protected double price;
+import java.util.HashMap;
+import java.util.Map;
 
-    public Room(String roomType, int beds, int size, double price) {
-        this.roomType = roomType;
-        this.beds = beds;
-        this.size = size;
-        this.price = price;
+class RoomInventory {
+    private HashMap<String, Integer> inventory;
+
+    public RoomInventory() {
+        inventory = new HashMap<>();
+        inventory.put("Single Room", 10);
+        inventory.put("Double Room", 6);
+        inventory.put("Suite Room", 3);
     }
 
-    public void displayRoomDetails() {
-        System.out.println("Room Type : " + roomType);
-        System.out.println("Beds      : " + beds);
-        System.out.println("Size      : " + size + " sq ft");
-        System.out.println("Price     : ₹" + price + " per night");
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
     }
-}
 
-class SingleRoom extends Room {
-    public SingleRoom() {
-        super("Single Room", 1, 200, 2500);
+    public void updateAvailability(String roomType, int newCount) {
+        if (inventory.containsKey(roomType)) {
+            inventory.put(roomType, newCount);
+        } else {
+            System.out.println("Room type does not exist in inventory.");
+        }
     }
-}
 
-class DoubleRoom extends Room {
-    public DoubleRoom() {
-        super("Double Room", 2, 350, 4000);
-    }
-}
-
-class SuiteRoom extends Room {
-    public SuiteRoom() {
-        super("Suite Room", 3, 600, 8000);
+    public void displayInventory() {
+        System.out.println("Current Room Inventory:");
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
+        }
     }
 }
 
 public class BookMyStayApp {
     public static void main(String[] args) {
-        System.out.println("=====================================");
+        System.out.println("======================================");
         System.out.println("        Book My Stay App");
         System.out.println("   Hotel Booking Management System");
-        System.out.println("           Version 2.1");
-        System.out.println("=====================================\n");
+        System.out.println("           Version 3.1");
+        System.out.println("======================================\n");
 
-        Room singleRoom = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suiteRoom = new SuiteRoom();
+        RoomInventory inventory = new RoomInventory();
+        inventory.displayInventory();
 
-        int singleRoomAvailable = 10;
-        int doubleRoomAvailable = 6;
-        int suiteRoomAvailable = 3;
+        System.out.println("\nChecking availability of Double Room...");
+        int available = inventory.getAvailability("Double Room");
+        System.out.println("Double Room Available: " + available);
 
-        System.out.println("----- Single Room -----");
-        singleRoom.displayRoomDetails();
-        System.out.println("Available Rooms : " + singleRoomAvailable);
-        System.out.println();
+        System.out.println("\nUpdating availability after booking...");
+        inventory.updateAvailability("Double Room", available - 1);
 
-        System.out.println("----- Double Room -----");
-        doubleRoom.displayRoomDetails();
-        System.out.println("Available Rooms : " + doubleRoomAvailable);
-        System.out.println();
+        System.out.println("\nUpdated Inventory:");
+        inventory.displayInventory();
 
-        System.out.println("----- Suite Room -----");
-        suiteRoom.displayRoomDetails();
-        System.out.println("Available Rooms : " + suiteRoomAvailable);
-        System.out.println();
-
-        System.out.println("Application finished successfully.");
+        System.out.println("\nApplication finished successfully.");
     }
 }
