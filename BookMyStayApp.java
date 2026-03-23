@@ -30,11 +30,20 @@ public class BookMyStayApp {
         System.out.println(suiteRoom.toString());
         System.out.println("==================================================");
 
-        // UC3: Use Centralized Room Inventory Management
-        RoomInventory inventory = new RoomInventory();
-        inventory.initializeInventory(singleRoom.getRoomName(), 5);
-        inventory.initializeInventory(doubleRoom.getRoomName(), 3);
-        inventory.initializeInventory(suiteRoom.getRoomName(), 0); // Setting one to 0 to test search filter
+        // UC12: Data Persistence & System Recovery
+        RoomInventory inventory = PersistenceService.loadInventory();
+        BookingHistory bookingHistory = PersistenceService.loadHistory();
+
+        if (inventory == null || bookingHistory == null) {
+            System.out.println("\n--- Initializing New System State ---");
+            inventory = new RoomInventory();
+            inventory.initializeInventory(singleRoom.getRoomName(), 5);
+            inventory.initializeInventory(doubleRoom.getRoomName(), 3);
+            inventory.initializeInventory(suiteRoom.getRoomName(), 0); // Setting one to 0 to test search filter
+            bookingHistory = new BookingHistory();
+        } else {
+            System.out.println("\n--- Resuming from Saved State ---");
+        }
 
         inventory.displayInventory();
 
@@ -74,9 +83,6 @@ public class BookMyStayApp {
         bookingQueue.offer(req8);
         
         System.out.println("Total requests waiting in queue: " + bookingQueue.size());
-
-        // UC8: Booking History & Reporting
-        BookingHistory bookingHistory = new BookingHistory();
 
         // UC6 & UC11: Concurrent Reservation Confirmation & Room Allocation
         BookingService bookingService = new BookingService(inventory, bookingHistory);
@@ -131,6 +137,9 @@ public class BookMyStayApp {
         System.out.println("\n--- Post-Cancellation Status ---");
         inventory.displayInventory();
         reportService.generateSummaryReport();
+
+        // UC12: Save state on shutdown
+        PersistenceService.saveState(inventory, bookingHistory);
 
         System.out.println("==================================================");
     }
