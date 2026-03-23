@@ -61,6 +61,15 @@ public class BookMyStayApp {
         System.out.println("Queued: " + req3);
         
         System.out.println("Total requests waiting in queue: " + bookingQueue.size());
+
+        // UC6: Reservation Confirmation & Room Allocation
+        BookingService bookingService = new BookingService(inventory);
+        bookingService.processQueue(bookingQueue);
+        
+        System.out.println("\n--- Post-Allocation Status ---");
+        inventory.displayInventory();
+        bookingService.displayAllocations();
+
         System.out.println("==================================================");
     }
 }
