@@ -42,5 +42,25 @@ public class BookMyStayApp {
         SearchService searchService = new SearchService();
         java.util.List<Room> allRooms = java.util.Arrays.asList(singleRoom, doubleRoom, suiteRoom);
         searchService.searchAvailableRooms(allRooms, inventory);
+
+        // UC5: Booking Request (First-Come-First-Served)
+        java.util.Queue<Reservation> bookingQueue = new java.util.LinkedList<>();
+        
+        System.out.println("--- Incoming Booking Requests ---");
+        Reservation req1 = new Reservation("Alice", singleRoom);
+        Reservation req2 = new Reservation("Bob", doubleRoom);
+        Reservation req3 = new Reservation("Charlie", singleRoom);
+        
+        bookingQueue.offer(req1);
+        System.out.println("Queued: " + req1);
+        
+        bookingQueue.offer(req2);
+        System.out.println("Queued: " + req2);
+        
+        bookingQueue.offer(req3);
+        System.out.println("Queued: " + req3);
+        
+        System.out.println("Total requests waiting in queue: " + bookingQueue.size());
+        System.out.println("==================================================");
     }
 }
