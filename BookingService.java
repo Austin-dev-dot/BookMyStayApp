@@ -40,6 +40,7 @@ public class BookingService {
 
                 // Update inventory and history
                 inventory.updateInventory(roomType, -1);
+                request.setAllocatedRoomId(roomId);
                 history.recordBooking(request);
                 
                 System.out.println("Confirmed: " + request.getGuestName() + " allocated to " + roomType + " (Room ID: " + roomId + ")");

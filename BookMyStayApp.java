@@ -92,6 +92,15 @@ public class BookMyStayApp {
         BookingReportService reportService = new BookingReportService(bookingHistory);
         reportService.generateSummaryReport();
 
+        // UC10: Booking Cancellation & Inventory Rollback
+        CancellationService cancellationService = new CancellationService(inventory, bookingHistory);
+        cancellationService.cancelBooking(req1); // Cancel Alice's booking
+        cancellationService.displayRollbackStack();
+
+        System.out.println("\n--- Post-Cancellation Status ---");
+        inventory.displayInventory();
+        reportService.generateSummaryReport();
+
         System.out.println("==================================================");
     }
 }
