@@ -24,8 +24,9 @@ public class BookingService {
             Reservation request = queue.poll();
             String roomType = request.getRequestedRoom().getRoomName();
 
-            int available = inventory.getAvailableRooms(roomType);
-            if (available > 0) {
+            try {
+                BookingValidator.validateAvailability(roomType, inventory);
+                
                 // Generate unique room ID
                 String roomId;
                 do {
@@ -42,8 +43,8 @@ public class BookingService {
                 history.recordBooking(request);
                 
                 System.out.println("Confirmed: " + request.getGuestName() + " allocated to " + roomType + " (Room ID: " + roomId + ")");
-            } else {
-                System.out.println("Failed: No availability for " + request.getGuestName() + " (" + roomType + ")");
+            } catch (InvalidBookingException e) {
+                System.out.println("Validation Error: " + request.getGuestName() + " booking failed. " + e.getMessage());
             }
         }
         System.out.println("--------------------------------");
