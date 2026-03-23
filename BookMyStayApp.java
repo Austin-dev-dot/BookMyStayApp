@@ -62,8 +62,11 @@ public class BookMyStayApp {
         
         System.out.println("Total requests waiting in queue: " + bookingQueue.size());
 
+        // UC8: Booking History & Reporting
+        BookingHistory bookingHistory = new BookingHistory();
+
         // UC6: Reservation Confirmation & Room Allocation
-        BookingService bookingService = new BookingService(inventory);
+        BookingService bookingService = new BookingService(inventory, bookingHistory);
         bookingService.processQueue(bookingQueue);
         
         System.out.println("\n--- Post-Allocation Status ---");
@@ -84,6 +87,10 @@ public class BookMyStayApp {
 
         addOnManager.displayServices(req1.getReservationId());
         addOnManager.displayServices(req2.getReservationId());
+
+        // UC8: Generate Report
+        BookingReportService reportService = new BookingReportService(bookingHistory);
+        reportService.generateSummaryReport();
 
         System.out.println("==================================================");
     }

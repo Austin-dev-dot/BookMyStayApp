@@ -9,9 +9,11 @@ public class BookingService {
     private RoomInventory inventory;
     private Set<String> globalAllocatedRoomIds;
     private Map<String, Set<String>> roomTypeAllocations;
+    private BookingHistory history;
 
-    public BookingService(RoomInventory inventory) {
+    public BookingService(RoomInventory inventory, BookingHistory history) {
         this.inventory = inventory;
+        this.history = history;
         this.globalAllocatedRoomIds = new HashSet<>();
         this.roomTypeAllocations = new HashMap<>();
     }
@@ -35,8 +37,9 @@ public class BookingService {
                 roomTypeAllocations.putIfAbsent(roomType, new HashSet<>());
                 roomTypeAllocations.get(roomType).add(roomId);
 
-                // Update inventory
+                // Update inventory and history
                 inventory.updateInventory(roomType, -1);
+                history.recordBooking(request);
                 
                 System.out.println("Confirmed: " + request.getGuestName() + " allocated to " + roomType + " (Room ID: " + roomId + ")");
             } else {
