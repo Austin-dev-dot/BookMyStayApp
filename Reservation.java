@@ -2,6 +2,7 @@ public class Reservation {
     private String guestName;
     private Room requestedRoom;
     private String reservationId;
+    private String allocatedRoomId;
 
     public Reservation(String guestName, Room requestedRoom) {
         this.guestName = guestName;
@@ -19,6 +20,14 @@ public class Reservation {
 
     public String getReservationId() {
         return reservationId;
+    }
+
+    public String getAllocatedRoomId() {
+        return allocatedRoomId;
+    }
+
+    public void setAllocatedRoomId(String allocatedRoomId) {
+        this.allocatedRoomId = allocatedRoomId;
     }
 
     @Override

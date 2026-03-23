@@ -13,6 +13,10 @@ public class BookingHistory {
         confirmedBookings.add(reservation);
     }
 
+    public void removeBooking(Reservation reservation) {
+        confirmedBookings.remove(reservation);
+    }
+
     public List<Reservation> getConfirmedBookings() {
         return Collections.unmodifiableList(confirmedBookings);
     }
