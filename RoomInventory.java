@@ -12,16 +12,16 @@ public class RoomInventory {
         inventory.put(roomName, count);
     }
 
-    public int getAvailableRooms(String roomName) {
+    public synchronized int getAvailableRooms(String roomName) {
         return inventory.getOrDefault(roomName, 0);
     }
 
-    public void updateInventory(String roomName, int delta) {
+    public synchronized void updateInventory(String roomName, int delta) {
         int current = getAvailableRooms(roomName);
         inventory.put(roomName, current + delta);
     }
 
-    public void displayInventory() {
+    public synchronized void displayInventory() {
         System.out.println("--- Current Room Inventory ---");
         for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue() + " available");

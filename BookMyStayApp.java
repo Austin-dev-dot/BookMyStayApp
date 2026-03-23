@@ -60,14 +60,45 @@ public class BookMyStayApp {
         bookingQueue.offer(req3);
         System.out.println("Queued: " + req3);
         
+        // Add more requests to show concurrency
+        Reservation req4 = new Reservation("Dave", singleRoom);
+        Reservation req5 = new Reservation("Eve", singleRoom);
+        Reservation req6 = new Reservation("Frank", singleRoom);
+        Reservation req7 = new Reservation("Grace", doubleRoom);
+        Reservation req8 = new Reservation("Heidi", doubleRoom);
+        
+        bookingQueue.offer(req4);
+        bookingQueue.offer(req5);
+        bookingQueue.offer(req6);
+        bookingQueue.offer(req7);
+        bookingQueue.offer(req8);
+        
         System.out.println("Total requests waiting in queue: " + bookingQueue.size());
 
         // UC8: Booking History & Reporting
         BookingHistory bookingHistory = new BookingHistory();
 
-        // UC6: Reservation Confirmation & Room Allocation
+        // UC6 & UC11: Concurrent Reservation Confirmation & Room Allocation
         BookingService bookingService = new BookingService(inventory, bookingHistory);
-        bookingService.processQueue(bookingQueue);
+        
+        System.out.println("\n--- Starting Concurrent Booking ---");
+        Thread t1 = new Thread(() -> bookingService.processQueue(bookingQueue), "Thread-1");
+        Thread t2 = new Thread(() -> bookingService.processQueue(bookingQueue), "Thread-2");
+        Thread t3 = new Thread(() -> bookingService.processQueue(bookingQueue), "Thread-3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        try {
+            t1.join();
+            t2.join();
+            t3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("--- Completed Processing ---");
         
         System.out.println("\n--- Post-Allocation Status ---");
         inventory.displayInventory();

@@ -19,36 +19,45 @@ public class BookingService {
     }
 
     public void processQueue(Queue<Reservation> queue) {
-        System.out.println("\n--- Processing Booking Queue ---");
-        while (!queue.isEmpty()) {
-            Reservation request = queue.poll();
-            String roomType = request.getRequestedRoom().getRoomName();
-
-            try {
-                BookingValidator.validateAvailability(roomType, inventory);
-                
-                // Generate unique room ID
-                String roomId;
-                do {
-                    roomId = roomType.substring(0, 3).toUpperCase() + "-" + UUID.randomUUID().toString().substring(0, 5);
-                } while (globalAllocatedRoomIds.contains(roomId));
-                
-                // Assign room and record ID
-                globalAllocatedRoomIds.add(roomId);
-                roomTypeAllocations.putIfAbsent(roomType, new HashSet<>());
-                roomTypeAllocations.get(roomType).add(roomId);
-
-                // Update inventory and history
-                inventory.updateInventory(roomType, -1);
-                request.setAllocatedRoomId(roomId);
-                history.recordBooking(request);
-                
-                System.out.println("Confirmed: " + request.getGuestName() + " allocated to " + roomType + " (Room ID: " + roomId + ")");
-            } catch (InvalidBookingException e) {
-                System.out.println("Validation Error: " + request.getGuestName() + " booking failed. " + e.getMessage());
+        System.out.println("\n--- Processing Booking Queue (" + Thread.currentThread().getName() + ") ---");
+        while (true) {
+            Reservation request;
+            synchronized (queue) {
+                if (queue.isEmpty()) {
+                    break;
+                }
+                request = queue.poll();
             }
+            processRequest(request);
         }
-        System.out.println("--------------------------------");
+    }
+
+    public synchronized void processRequest(Reservation request) {
+        String roomType = request.getRequestedRoom().getRoomName();
+
+        try {
+            BookingValidator.validateAvailability(roomType, inventory);
+            
+            // Generate unique room ID
+            String roomId;
+            do {
+                roomId = roomType.substring(0, 3).toUpperCase() + "-" + UUID.randomUUID().toString().substring(0, 5);
+            } while (globalAllocatedRoomIds.contains(roomId));
+            
+            // Assign room and record ID
+            globalAllocatedRoomIds.add(roomId);
+            roomTypeAllocations.putIfAbsent(roomType, new HashSet<>());
+            roomTypeAllocations.get(roomType).add(roomId);
+
+            // Update inventory and history
+            inventory.updateInventory(roomType, -1);
+            request.setAllocatedRoomId(roomId);
+            history.recordBooking(request);
+            
+            System.out.println("Confirmed: " + request.getGuestName() + " allocated to " + roomType + " (Room ID: " + roomId + ") [" + Thread.currentThread().getName() + "]");
+        } catch (InvalidBookingException e) {
+            System.out.println("Validation Error: " + request.getGuestName() + " booking failed. " + e.getMessage() + " [" + Thread.currentThread().getName() + "]");
+        }
     }
 
     public void displayAllocations() {
