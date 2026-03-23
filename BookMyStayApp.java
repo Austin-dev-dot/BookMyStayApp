@@ -70,6 +70,21 @@ public class BookMyStayApp {
         inventory.displayInventory();
         bookingService.displayAllocations();
 
+        // UC7: Add-On Service Selection
+        AddOnServiceManager addOnManager = new AddOnServiceManager();
+        AddOnService spaService = new AddOnService("Spa Access", 50.0);
+        AddOnService breakfastService = new AddOnService("Breakfast Buffet", 25.0);
+
+        System.out.println("\n--- Guest " + req1.getGuestName() + " Selecting Add-Ons ---");
+        addOnManager.addService(req1.getReservationId(), spaService);
+        addOnManager.addService(req1.getReservationId(), breakfastService);
+        
+        System.out.println("\n--- Guest " + req2.getGuestName() + " Selecting Add-Ons ---");
+        addOnManager.addService(req2.getReservationId(), breakfastService);
+
+        addOnManager.displayServices(req1.getReservationId());
+        addOnManager.displayServices(req2.getReservationId());
+
         System.out.println("==================================================");
     }
 }
