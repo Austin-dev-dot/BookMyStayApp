@@ -1,0 +1,22 @@
+/**
+ * BookMyStayApp acts as the main entry point for the Hotel Booking Management System.
+ * This class establishes a clear starting point for the application.
+ * 
+ * @author Austin Paul
+ * @version 1.0
+ */
+public class BookMyStayApp {
+
+    /**
+     * The main method starts the application.
+     * 
+     * @param args Command line arguments (not used currently).
+     */
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("Welcome to the Hotel Booking Management System!");
+        System.out.println("Application Name: BookMyStayApp");
+        System.out.println("Version: v1.0");
+        System.out.println("==================================================");
+    }
+}
