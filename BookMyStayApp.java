@@ -34,8 +34,13 @@ public class BookMyStayApp {
         RoomInventory inventory = new RoomInventory();
         inventory.initializeInventory(singleRoom.getRoomName(), 5);
         inventory.initializeInventory(doubleRoom.getRoomName(), 3);
-        inventory.initializeInventory(suiteRoom.getRoomName(), 2);
+        inventory.initializeInventory(suiteRoom.getRoomName(), 0); // Setting one to 0 to test search filter
 
         inventory.displayInventory();
+
+        // UC4: Room Search & Availability Check
+        SearchService searchService = new SearchService();
+        java.util.List<Room> allRooms = java.util.Arrays.asList(singleRoom, doubleRoom, suiteRoom);
+        searchService.searchAvailableRooms(allRooms, inventory);
     }
 }
