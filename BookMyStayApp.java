@@ -34,8 +34,57 @@ public class BookMyStayApp {
         RoomInventory inventory = new RoomInventory();
         inventory.initializeInventory(singleRoom.getRoomName(), 5);
         inventory.initializeInventory(doubleRoom.getRoomName(), 3);
-        inventory.initializeInventory(suiteRoom.getRoomName(), 2);
+        inventory.initializeInventory(suiteRoom.getRoomName(), 0); // Setting one to 0 to test search filter
 
         inventory.displayInventory();
+
+        // UC4: Room Search & Availability Check
+        SearchService searchService = new SearchService();
+        java.util.List<Room> allRooms = java.util.Arrays.asList(singleRoom, doubleRoom, suiteRoom);
+        searchService.searchAvailableRooms(allRooms, inventory);
+
+        // UC5: Booking Request (First-Come-First-Served)
+        java.util.Queue<Reservation> bookingQueue = new java.util.LinkedList<>();
+        
+        System.out.println("--- Incoming Booking Requests ---");
+        Reservation req1 = new Reservation("Alice", singleRoom);
+        Reservation req2 = new Reservation("Bob", doubleRoom);
+        Reservation req3 = new Reservation("Charlie", singleRoom);
+        
+        bookingQueue.offer(req1);
+        System.out.println("Queued: " + req1);
+        
+        bookingQueue.offer(req2);
+        System.out.println("Queued: " + req2);
+        
+        bookingQueue.offer(req3);
+        System.out.println("Queued: " + req3);
+        
+        System.out.println("Total requests waiting in queue: " + bookingQueue.size());
+
+        // UC6: Reservation Confirmation & Room Allocation
+        BookingService bookingService = new BookingService(inventory);
+        bookingService.processQueue(bookingQueue);
+        
+        System.out.println("\n--- Post-Allocation Status ---");
+        inventory.displayInventory();
+        bookingService.displayAllocations();
+
+        // UC7: Add-On Service Selection
+        AddOnServiceManager addOnManager = new AddOnServiceManager();
+        AddOnService spaService = new AddOnService("Spa Access", 50.0);
+        AddOnService breakfastService = new AddOnService("Breakfast Buffet", 25.0);
+
+        System.out.println("\n--- Guest " + req1.getGuestName() + " Selecting Add-Ons ---");
+        addOnManager.addService(req1.getReservationId(), spaService);
+        addOnManager.addService(req1.getReservationId(), breakfastService);
+        
+        System.out.println("\n--- Guest " + req2.getGuestName() + " Selecting Add-Ons ---");
+        addOnManager.addService(req2.getReservationId(), breakfastService);
+
+        addOnManager.displayServices(req1.getReservationId());
+        addOnManager.displayServices(req2.getReservationId());
+
+        System.out.println("==================================================");
     }
 }
